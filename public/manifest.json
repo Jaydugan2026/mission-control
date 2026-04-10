@@ -1,0 +1,55 @@
+{
+  "name": "Mission Control — Peter's Dashboard",
+  "short_name": "Mission Control",
+  "description": "Executive Assistant Dashboard for Peter's Duties",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#000000",
+  "theme_color": "#000000",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["productivity", "business"],
+  "shortcuts": [
+    {
+      "name": "Morning Brief",
+      "short_name": "Brief",
+      "description": "Run Morning Brief duty",
+      "url": "/?duty=morning-brief",
+      "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "End-of-Day Wrap-up",
+      "short_name": "Wrap-up",
+      "description": "Run End-of-Day Wrap-up duty",
+      "url": "/?duty=wrap-up",
+      "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Stale Lead Nudge",
+      "short_name": "Nudge",
+      "description": "Run Stale Lead Nudge duty",
+      "url": "/?duty=stale-nudge",
+      "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Weekly Summary",
+      "short_name": "Summary",
+      "description": "Run Weekly Pipeline Summary duty",
+      "url": "/?duty=weekly-summary",
+      "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
+    }
+  ]
+}
