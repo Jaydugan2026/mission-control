@@ -19,6 +19,17 @@ export interface Activity {
 }
 
 import { PipelineStage } from './jobnimbus';
+import { MergedFinancialData } from './financials';
+
+interface FinancialMetrics {
+  totalProfit: number;
+  totalRevenue: number;
+  totalCosts: number;
+  avgProfitMargin: number;
+  profitByRep: Record<string, number>;
+  jobsWithMatches: number;
+  jobsWithoutMatches: number;
+}
 
 interface AppState {
   // Duties
@@ -38,11 +49,22 @@ interface AppState {
   // Pipeline (JOBnimbus)
   pipeline: {
     stages: PipelineStage[];
+    stalled: Array<{ id: string; name: string; stage: string; daysInStage: number }>;
     isLoading: boolean;
     lastFetched: Date | null;
     error: string | null;
   };
   fetchPipeline: () => Promise<void>;
+
+  // Financials (Google Sheets + JobNimbus)
+  financials: {
+    mergedJobs: MergedFinancialData[];
+    metrics: FinancialMetrics | null;
+    isLoading: boolean;
+    lastFetched: Date | null;
+    error: string | null;
+  };
+  fetchFinancials: () => Promise<void>;
 
   // Stats
   stats: {
@@ -99,6 +121,14 @@ export const useAppStore = create<AppState>((set, get) => ({
   currentTask: null,
   pipeline: {
     stages: [],
+    stalled: [],
+    isLoading: false,
+    lastFetched: null,
+    error: null,
+  },
+  financials: {
+    mergedJobs: [],
+    metrics: null,
     isLoading: false,
     lastFetched: null,
     error: null,
@@ -120,6 +150,7 @@ export const useAppStore = create<AppState>((set, get) => ({
         set({
           pipeline: {
             stages: data.data.stages,
+            stalled: data.data.stalled ?? [],
             isLoading: false,
             lastFetched: new Date(),
             error: null,
@@ -129,6 +160,7 @@ export const useAppStore = create<AppState>((set, get) => ({
         set({
           pipeline: {
             stages: [],
+            stalled: [],
             isLoading: false,
             lastFetched: null,
             error: data.error || 'Failed to fetch pipeline',
@@ -139,9 +171,52 @@ export const useAppStore = create<AppState>((set, get) => ({
       set({
         pipeline: {
           stages: [],
+          stalled: [],
           isLoading: false,
           lastFetched: null,
           error: error instanceof Error ? error.message : 'Failed to fetch pipeline',
+        },
+      });
+    }
+  },
+
+  // Financials fetch action
+  fetchFinancials: async () => {
+    set({ financials: { ...get().financials, isLoading: true, error: null } });
+
+    try {
+      const response = await fetch('/api/financials');
+      const data = await response.json();
+
+      if (data.success) {
+        set({
+          financials: {
+            mergedJobs: data.data.mergedJobs || [],
+            metrics: data.data.metrics || null,
+            isLoading: false,
+            lastFetched: new Date(),
+            error: null,
+          },
+        });
+      } else {
+        set({
+          financials: {
+            mergedJobs: [],
+            metrics: null,
+            isLoading: false,
+            lastFetched: null,
+            error: data.error || 'Failed to fetch financials',
+          },
+        });
+      }
+    } catch (error) {
+      set({
+        financials: {
+          mergedJobs: [],
+          metrics: null,
+          isLoading: false,
+          lastFetched: null,
+          error: error instanceof Error ? error.message : 'Failed to fetch financials',
         },
       });
     }

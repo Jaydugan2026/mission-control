@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Bell, Settings, User } from 'lucide-react';
+import Image from 'next/image';
 
 export function Header() {
   const [currentTime, setCurrentTime] = useState('');
@@ -17,43 +17,32 @@ export function Header() {
         })
       );
     };
-
     updateTime();
     const interval = setInterval(updateTime, 1000);
     return () => clearInterval(interval);
   }, []);
 
   return (
-    <header className="h-14 border-b border-[#222222] bg-[#000000] flex items-center justify-between px-4 sticky top-0 z-50">
-      {/* Logo */}
-      <div className="flex items-center gap-3">
-        <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#ffffff] via-[#888888] to-[#222222] flex items-center justify-center">
-          <span className="text-[#000000] font-bold text-xs">🎯</span>
-        </div>
-        <div>
-          <h1 className="text-sm font-semibold text-[#ffffff]">Mission Control</h1>
-          <p className="text-[10px] text-[#666666]">Peter — Executive Assistant</p>
-        </div>
-      </div>
-
-      {/* Right section */}
+    <header className="h-16 border-b border-[#1a2440] bg-[#0a0f1a]/80 backdrop-blur-md flex items-center justify-between px-6 sticky top-0 z-50">
       <div className="flex items-center gap-4">
-        {/* Clock */}
-        <div className="text-xs text-[#a0a0a0] font-mono">{currentTime}</div>
-
-        {/* Actions */}
+        {/* Fortitude Roofing Logo */}
+        <div className="relative w-10 h-10 shrink-0">
+          <Image
+            src="/fortitude-logo.png"
+            alt="Fortitude Roofing"
+            fill
+            className="object-contain"
+          />
+        </div>
         <div className="flex items-center gap-2">
-          <button className="p-2 text-[#666666] hover:text-[#ffffff] transition-colors">
-            <Bell className="w-4 h-4" />
-          </button>
-          <button className="p-2 text-[#666666] hover:text-[#ffffff] transition-colors">
-            <Settings className="w-4 h-4" />
-          </button>
-          <button className="p-2 text-[#666666] hover:text-[#ffffff] transition-colors">
-            <User className="w-4 h-4" />
-          </button>
+          <span className="text-[#3b82f6] font-bold text-lg">⚡</span>
+          <div>
+            <span className="text-[#f0f4fc] font-semibold text-sm tracking-wide block">MISSION CONTROL</span>
+            <span className="text-[#8895b0] text-xs block">Fortitude Roofing</span>
+          </div>
         </div>
       </div>
+      <div className="font-mono text-xs text-[#8895b0]">{currentTime}</div>
     </header>
   );
 }

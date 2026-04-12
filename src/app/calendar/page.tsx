@@ -1,189 +1,196 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { ChevronLeft, ChevronRight, RefreshCw } from 'lucide-react';
 import Layout from '@/components/layout';
-import { Card } from '@/components/ui/Card';
-import { Badge } from '@/components/ui/Badge';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
 
-type DutyType = 'weekly-summary' | 'stale-nudge' | 'wrap-up';
-
-interface ScheduledDuty {
-  type: DutyType;
-  label: string;
-  cron: string;
-  color: 'info' | 'warning' | 'default';
+interface CalEvent {
+  id: string;
+  summary: string;
+  start: string;
+  end: string;
+  allDay?: boolean;
 }
 
-const DUTIES: Record<DutyType, ScheduledDuty> = {
-  'weekly-summary': {
-    type: 'weekly-summary',
-    label: 'Weekly Summary',
-    cron: '0 7 * * 1', // Mondays at 7 AM
-    color: 'info',
-  },
-  'stale-nudge': {
-    type: 'stale-nudge',
-    label: 'Stale Nudge',
-    cron: '0 9 * * *', // Daily at 9 AM
-    color: 'warning',
-  },
-  'wrap-up': {
-    type: 'wrap-up',
-    label: 'Wrap-up',
-    cron: '0 17 * * *', // Daily at 5 PM
-    color: 'default',
-  },
-};
+const DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+
+function getMondayOf(date: Date): Date {
+  const d = new Date(date);
+  const day = d.getDay();
+  const diff = day === 0 ? -6 : 1 - day;
+  d.setDate(d.getDate() + diff);
+  d.setHours(0, 0, 0, 0);
+  return d;
+}
+
+function formatTime(iso: string): string {
+  try {
+    return new Date(iso).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
+  } catch { return ''; }
+}
+
+function isSameDay(a: Date, b: Date): boolean {
+  return a.getFullYear() === b.getFullYear() &&
+    a.getMonth() === b.getMonth() &&
+    a.getDate() === b.getDate();
+}
 
 export default function CalendarPage() {
-  const [currentDate] = useState(new Date());
+  const [monday, setMonday] = useState(() => getMondayOf(new Date()));
+  const [events, setEvents] = useState<CalEvent[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  // Generate calendar grid
-  const getDaysInMonth = (date: Date) => {
-    const year = date.getFullYear();
-    const month = date.getMonth();
-    const firstDay = new Date(year, month, 1);
-    const lastDay = new Date(year, month + 1, 0);
-    const daysInMonth = lastDay.getDate();
-    const startingDay = firstDay.getDay();
+  const weekDays = Array.from({ length: 7 }, (_, i) => {
+    const d = new Date(monday);
+    d.setDate(monday.getDate() + i);
+    return d;
+  });
 
-    const days = [];
-    for (let i = 0; i < startingDay; i++) {
-      days.push(null);
+  const fetchEvents = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const timeMin = monday.toISOString();
+      const end = new Date(monday);
+      end.setDate(monday.getDate() + 7);
+      const timeMax = end.toISOString();
+      const res = await fetch(`/api/calendar?timeMin=${encodeURIComponent(timeMin)}&timeMax=${encodeURIComponent(timeMax)}`);
+      const data = await res.json();
+      if (data.success) setEvents(data.events ?? []);
+      else setError(data.error ?? 'Failed to load calendar');
+    } catch {
+      setError('Could not reach calendar API');
+    } finally {
+      setLoading(false);
     }
-    for (let i = 1; i <= daysInMonth; i++) {
-      days.push(new Date(year, month, i));
-    }
-    return days;
   };
 
-  const days = getDaysInMonth(currentDate);
-  const monthName = currentDate.toLocaleString('default', { month: 'long', year: 'numeric' });
+  useEffect(() => { fetchEvents(); }, [monday]);
 
-  // Get duties for a specific day
-  const getDutiesForDay = (date: Date | null) => {
-    if (!date) return [];
-    const dayOfWeek = date.getDay();
-    const dutiesForDay: ScheduledDuty[] = [];
+  const prevWeek = () => { const d = new Date(monday); d.setDate(d.getDate() - 7); setMonday(d); };
+  const nextWeek = () => { const d = new Date(monday); d.setDate(d.getDate() + 7); setMonday(d); };
+  const goToday  = () => setMonday(getMondayOf(new Date()));
 
-    // Daily duties
-    dutiesForDay.push(DUTIES['stale-nudge']);
-    dutiesForDay.push(DUTIES['wrap-up']);
+  const endOfWeek = new Date(monday);
+  endOfWeek.setDate(monday.getDate() + 6);
+  const today = new Date();
 
-    // Monday only
-    if (dayOfWeek === 1) {
-      dutiesForDay.push(DUTIES['weekly-summary']);
-    }
-
-    return dutiesForDay;
-  };
+  const weekLabel =
+    monday.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) +
+    ' — ' +
+    endOfWeek.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
 
   return (
     <Layout>
-      <div className="p-6 space-y-6">
+      <div className="p-6 space-y-5 fade-in">
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h2 className="text-xl font-semibold text-[#ffffff]">Scheduled Duties</h2>
-            <p className="text-sm text-[#666666] mt-1">
-              Calendar view of automated duty schedules
-            </p>
+            <h1 className="text-lg font-semibold text-[#f1f5f9]">Calendar</h1>
+            <p className="text-xs text-[#475569] mt-0.5">{weekLabel}</p>
           </div>
           <div className="flex items-center gap-2">
-            <button className="p-2 text-[#666666] hover:text-[#ffffff] transition-colors">
-              <ChevronLeft className="w-5 h-5" />
+            <button
+              onClick={goToday}
+              className="text-xs px-3 py-1.5 rounded-lg border border-[#1e2d4a] text-[#94a3b8] hover:border-[#3b82f6] hover:text-[#3b82f6] transition-all cursor-pointer"
+            >
+              Today
             </button>
-            <span className="text-sm font-medium text-[#ffffff] min-w-[200px] text-center">
-              {monthName}
-            </span>
-            <button className="p-2 text-[#666666] hover:text-[#ffffff] transition-colors">
-              <ChevronRight className="w-5 h-5" />
+            <button
+              onClick={prevWeek}
+              className="w-7 h-7 flex items-center justify-center rounded-lg border border-[#1e2d4a] text-[#94a3b8] hover:border-[#3b82f6] hover:text-[#3b82f6] transition-all cursor-pointer"
+            >
+              <ChevronLeft className="w-4 h-4" />
+            </button>
+            <button
+              onClick={nextWeek}
+              className="w-7 h-7 flex items-center justify-center rounded-lg border border-[#1e2d4a] text-[#94a3b8] hover:border-[#3b82f6] hover:text-[#3b82f6] transition-all cursor-pointer"
+            >
+              <ChevronRight className="w-4 h-4" />
+            </button>
+            <button
+              onClick={fetchEvents}
+              disabled={loading}
+              className="flex items-center gap-1 text-xs text-[#94a3b8] hover:text-[#3b82f6] transition-colors disabled:opacity-40 cursor-pointer ml-1"
+            >
+              <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin' : ''}`} />
             </button>
           </div>
         </div>
 
-        {/* Legend */}
-        <Card variant="bordered" padding="sm">
-          <div className="flex items-center gap-4 text-xs">
-            <div className="flex items-center gap-2">
-              <Badge variant="info" size="sm">Weekly</Badge>
-              <span className="text-[#666666]">Mondays at 7:00 AM</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <Badge variant="warning" size="sm">Nudge</Badge>
-              <span className="text-[#666666]">Daily at 9:00 AM</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <Badge variant="default" size="sm">Wrap-up</Badge>
-              <span className="text-[#666666]">Daily at 5:00 PM</span>
-            </div>
+        {error && (
+          <div className="px-4 py-3 bg-[#ef4444]/10 border border-[#ef4444]/25 rounded-xl text-sm text-[#ef4444]">
+            {error} — Google Calendar may need to be reconnected via MCP.
           </div>
-        </Card>
+        )}
 
-        {/* Calendar Grid */}
-        <Card variant="bordered" padding="none">
-          <div className="grid grid-cols-7 border-b border-[#222222]">
-            {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((day) => (
-              <div
-                key={day}
-                className="p-3 text-center text-xs font-medium text-[#666666] border-r border-[#222222] last:border-0"
-              >
-                {day}
-              </div>
-            ))}
+        {/* Week grid */}
+        <div className="bg-[#0d1424] border border-[#1e2d4a] border-l-[3px] border-l-[#3b82f6] rounded-xl shadow-[0_2px_8px_rgba(0,0,0,0.4)] overflow-hidden">
+          {/* Day headers */}
+          <div className="grid grid-cols-7 border-b border-[#1e2d4a]">
+            {weekDays.map((day, i) => {
+              const isToday = isSameDay(day, today);
+              return (
+                <div
+                  key={i}
+                  className={`px-3 py-3 text-center border-r border-[#1e2d4a] last:border-r-0 ${
+                    isToday ? 'bg-[#3b82f6]/8' : ''
+                  }`}
+                >
+                  <div className="text-xs text-[#475569] font-medium">{DAYS[i]}</div>
+                  <div className={`text-xl font-semibold mt-0.5 ${isToday ? 'text-[#3b82f6]' : 'text-[#f1f5f9]'}`}>
+                    {day.getDate()}
+                  </div>
+                  {isToday && <div className="w-1 h-1 rounded-full bg-[#3b82f6] mx-auto mt-1" />}
+                </div>
+              );
+            })}
           </div>
-          <div className="grid grid-cols-7">
-            {days.map((day, index) => {
-              const duties = getDutiesForDay(day);
-              const isToday = day && day.toDateString() === new Date().toDateString();
+
+          {/* Event columns */}
+          <div className="grid grid-cols-7 min-h-[280px]">
+            {weekDays.map((day, i) => {
+              const isToday = isSameDay(day, today);
+              const dayEvents = events.filter(ev => {
+                try { return isSameDay(new Date(ev.start), day); }
+                catch { return false; }
+              });
 
               return (
                 <div
-                  key={index}
-                  className={`
-                    min-h-[100px] p-2 border-r border-b border-[#222222]
-                    ${!day ? 'bg-[#050505]' : ''}
-                    ${isToday ? 'bg-[#111111]' : ''}
-                  `}
+                  key={i}
+                  className={`px-2 py-3 border-r border-[#1e2d4a] last:border-r-0 space-y-1.5 ${
+                    isToday ? 'bg-[#3b82f6]/4' : ''
+                  }`}
                 >
-                  {day && (
-                    <div className="space-y-1">
-                      <div className={`text-xs ${isToday ? 'text-[#ffffff] font-semibold' : 'text-[#666666]'}`}>
-                        {day.getDate()}
+                  {loading ? (
+                    <div className="h-6 bg-[#111d35] rounded animate-pulse" />
+                  ) : dayEvents.length === 0 ? (
+                    <div className="text-[10px] text-[#1e2d4a] text-center mt-6">—</div>
+                  ) : (
+                    dayEvents.map(ev => (
+                      <div
+                        key={ev.id}
+                        title={ev.summary}
+                        className="px-2 py-1.5 rounded-lg bg-[#3b82f6]/10 border border-[#3b82f6]/20 hover:bg-[#3b82f6]/15 transition-colors"
+                      >
+                        {!ev.allDay && (
+                          <div className="text-[9px] text-[#3b82f6] font-mono mb-0.5 leading-none">
+                            {formatTime(ev.start)}
+                          </div>
+                        )}
+                        <div className="text-[10px] text-[#f1f5f9] font-medium leading-tight line-clamp-2">
+                          {ev.summary}
+                        </div>
                       </div>
-                      <div className="flex flex-col gap-1">
-                        {duties.map((duty) => (
-                          <Badge key={duty.type} variant={duty.color} size="sm">
-                            {duty.label}
-                          </Badge>
-                        ))}
-                      </div>
-                    </div>
+                    ))
                   )}
                 </div>
               );
             })}
           </div>
-        </Card>
-
-        {/* Schedule List */}
-        <Card variant="bordered" padding="md">
-          <h3 className="text-sm font-semibold text-[#ffffff] mb-4">Schedule Summary</h3>
-          <div className="space-y-3">
-            {Object.values(DUTIES).map((duty) => (
-              <div key={duty.type} className="flex items-center justify-between py-2 border-b border-[#222222] last:border-0">
-                <div className="flex items-center gap-3">
-                  <Badge variant={duty.color} size="sm">{duty.label}</Badge>
-                  <span className="text-sm text-[#a0a0a0]">{duty.cron}</span>
-                </div>
-                <span className="text-xs text-[#666666]">
-                  {duty.type === 'weekly-summary' ? 'Every Monday' : 'Daily'}
-                </span>
-              </div>
-            ))}
-          </div>
-        </Card>
+        </div>
       </div>
     </Layout>
   );

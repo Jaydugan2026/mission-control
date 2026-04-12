@@ -16,18 +16,21 @@ export const Card = forwardRef<HTMLDivElement, CardProps>(
 
     const variants = {
       default: `
-        bg-[#0a0a0a]
+        bg-[#0d1424]
       `,
       bordered: `
-        bg-[#0a0a0a]
-        border border-[#222222]
-        hover:border-[#333333]
+        bg-[#0d1424]
+        border border-[#1e2d4a]
+        hover:border-[#2563eb]
+        hover:shadow-[0_0_0_1px_rgba(59,130,246,0.2),0_4px_16px_rgba(59,130,246,0.08)]
       `,
       glow: `
-        bg-[#0a0a0a]
-        border border-[#222222]
-        hover:border-[#ffffff]
-        hover:shadow-[0_0_20px_rgba(255,255,255,0.1)]
+        bg-[#0d1424]
+        border-l-[3px] border-l-[#3b82f6] border border-[#1e2d4a]
+        shadow-[0_2px_8px_rgba(0,0,0,0.4)]
+        hover:border-[#2563eb]
+        hover:shadow-[0_0_0_1px_rgba(59,130,246,0.3),0_4px_16px_rgba(59,130,246,0.15)]
+        hover:-translate-y-px
       `,
     };
 

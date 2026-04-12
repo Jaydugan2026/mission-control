@@ -17,23 +17,19 @@ export const Badge = forwardRef<HTMLSpanElement, BadgeProps>(
 
     const variants = {
       default: `
-        bg-[#222222] text-[#a0a0a0]
+        bg-[#111d35] text-[#94a3b8] border border-[#1e2d4a]
       `,
       success: `
-        bg-[#10b981]/10 text-[#10b981]
-        border border-[#10b981]/20
+        bg-[#10b981]/10 text-[#10b981] border border-[#10b981]/25
       `,
       error: `
-        bg-[#ef4444]/10 text-[#ef4444]
-        border border-[#ef4444]/20
+        bg-[#ef4444]/10 text-[#ef4444] border border-[#ef4444]/25
       `,
       warning: `
-        bg-[#f59e0b]/10 text-[#f59e0b]
-        border border-[#f59e0b]/20
+        bg-[#f59e0b]/10 text-[#f59e0b] border border-[#f59e0b]/25
       `,
       info: `
-        bg-[#3b82f6]/10 text-[#3b82f6]
-        border border-[#3b82f6]/20
+        bg-[#3b82f6]/10 text-[#3b82f6] border border-[#3b82f6]/25
       `,
     };
 
