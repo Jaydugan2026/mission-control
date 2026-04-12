@@ -67,7 +67,7 @@ export async function GET() {
           name: job.name,
           stage: job.status_name,
           daysInStage: job.date_status_change
-            ? Math.floor((Date.now() - parseDate(job.date_status_change)) / (1000 * 60 * 60 * 24))
+            ? Math.floor((Date.now() - (parseDate(job.date_status_change) ?? 0)) / (1000 * 60 * 60 * 24))
             : 0,
         })),
         summary,

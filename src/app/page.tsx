@@ -2,6 +2,7 @@
 
 import { useEffect } from 'react';
 import Layout from '@/components/layout';
+import { FallingPattern } from '@/components/ui/falling-pattern';
 import { StaleLeadsSpotlight } from '@/components/dashboard/StaleLeadsSpotlight';
 import { PipelineOverview } from '@/components/dashboard/PipelineOverview';
 import { FinancialKPIs } from '@/components/dashboard/FinancialKPIs';
@@ -30,13 +31,18 @@ export default function Dashboard() {
 
   return (
     <Layout>
-      <div className="p-6 space-y-5 fade-in">
-        {/* Page title */}
-        <div>
-          <h1 className="text-xl font-semibold text-[#f0f4fc]">Dashboard</h1>
-          <p className="text-xs text-[#8895b0] mt-0.5">Live pipeline status</p>
-        </div>
+      {/* Subtle falling pattern background effect */}
+      <div className="fixed inset-0 pointer-events-none opacity-[0.03] z-0">
+        <FallingPattern
+          color="var(--copper)"
+          backgroundColor="transparent"
+          duration={200}
+          blurIntensity="0.5em"
+          density={1.2}
+        />
+      </div>
 
+      <div className="relative p-6 space-y-5 fade-in z-10">
         {/* Hero: Stale Leads Spotlight */}
         <StaleLeadsSpotlight leads={staleLeads} isLoading={pipeline.isLoading} />
 

@@ -20,6 +20,7 @@ export interface Activity {
 
 import { PipelineStage } from './jobnimbus';
 import { MergedFinancialData } from './financials';
+import type { SalesReportPayload } from '@/types/sales-report';
 
 interface FinancialMetrics {
   totalProfit: number;
@@ -65,6 +66,15 @@ interface AppState {
     error: string | null;
   };
   fetchFinancials: () => Promise<void>;
+
+  // Sales Report
+  salesReport: {
+    data: SalesReportPayload | null;
+    isLoading: boolean;
+    lastFetched: Date | null;
+    error: string | null;
+  };
+  fetchSalesReport: () => Promise<void>;
 
   // Stats
   stats: {
@@ -129,6 +139,12 @@ export const useAppStore = create<AppState>((set, get) => ({
   financials: {
     mergedJobs: [],
     metrics: null,
+    isLoading: false,
+    lastFetched: null,
+    error: null,
+  },
+  salesReport: {
+    data: null,
     isLoading: false,
     lastFetched: null,
     error: null,
@@ -217,6 +233,42 @@ export const useAppStore = create<AppState>((set, get) => ({
           isLoading: false,
           lastFetched: null,
           error: error instanceof Error ? error.message : 'Failed to fetch financials',
+        },
+      });
+    }
+  },
+
+  fetchSalesReport: async () => {
+    set({ salesReport: { ...get().salesReport, isLoading: true, error: null } });
+    try {
+      const response = await fetch('/api/sales-report');
+      const json = await response.json();
+      if (json.success) {
+        set({
+          salesReport: {
+            data: json.data,
+            isLoading: false,
+            lastFetched: new Date(),
+            error: null,
+          },
+        });
+      } else {
+        set({
+          salesReport: {
+            data: null,
+            isLoading: false,
+            lastFetched: null,
+            error: json.error ?? 'Failed to fetch sales report',
+          },
+        });
+      }
+    } catch (error) {
+      set({
+        salesReport: {
+          data: null,
+          isLoading: false,
+          lastFetched: null,
+          error: error instanceof Error ? error.message : 'Failed to fetch sales report',
         },
       });
     }

@@ -142,6 +142,29 @@ export function filterActivePipeline(jobs: JobnimbusJob[]): JobnimbusJob[] {
   });
 }
 
+const SALES_STATUSES = new Set([
+  'Deposit Collected',
+  'Materials Ordered',
+  'Scheduled',
+  'In Progress',
+  'Work Complete',
+  'Pending Final Payment',
+  'Paid & Closed',
+]);
+
+/**
+ * Filter jobs for the sales report — includes all statuses from Deposit Collected through Paid & Closed.
+ * Unlike filterActivePipeline, this includes is_closed jobs (Paid & Closed).
+ */
+export function filterSalesJobs(jobs: JobnimbusJob[]): JobnimbusJob[] {
+  const minDate = new Date('2025-01-01').getTime();
+  return jobs.filter(job => {
+    const createdDate = parseDate(job.date_created);
+    if (createdDate === null || createdDate < minDate) return false;
+    return SALES_STATUSES.has(job.status_name);
+  });
+}
+
 /**
  * Group jobs by status_name and calculate totals
  * Deals within each stage are sorted by date_status_change descending (most recent first)

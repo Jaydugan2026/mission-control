@@ -29,9 +29,9 @@ export function FinancialKPIs({ metrics, isLoading, lastFetched }: FinancialKPIs
     return (
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         {[1, 2, 3, 4].map((i) => (
-          <div key={i} className="bg-[#0d1424] border border-[#1e2d4a] rounded-xl px-4 py-3 animate-pulse">
-            <div className="h-8 bg-[#1e2d4a] rounded w-24 mb-2" />
-            <div className="h-3 bg-[#1e2d4a] rounded w-16" />
+          <div key={i} className="bg-[#0a0a0a] border border-[#ffffff30] rounded-xl px-4 py-3 animate-pulse">
+            <div className="h-8 bg-[#1a1a1a] rounded w-24 mb-2" />
+            <div className="h-3 bg-[#1a1a1a] rounded w-16" />
           </div>
         ))}
       </div>
@@ -40,7 +40,7 @@ export function FinancialKPIs({ metrics, isLoading, lastFetched }: FinancialKPIs
 
   if (!metrics) {
     return (
-      <div className="bg-[#0d1424] border border-[#1e2d4a] border-l-[3px] border-l-[#f59e0b] rounded-xl p-4">
+      <div className="bg-[#0a0a0a] border border-[#ffffff30] border-l-[3px] border-l-[#f59e0b] rounded-xl p-4">
         <p className="text-sm text-[#f59e0b]">
           Financial data not configured. Please set up Google Sheets integration.
         </p>
@@ -81,7 +81,7 @@ export function FinancialKPIs({ metrics, isLoading, lastFetched }: FinancialKPIs
           return (
             <div
               key={kpi.label}
-              className="bg-[#0d1424] border border-[#1e2d4a] border-l-[3px] border-l-[#3b82f6] rounded-xl px-4 py-3 shadow-[0_2px_8px_rgba(0,0,0,0.4)]"
+              className="bg-[#0a0a0a] border border-[#ffffff30] border-l-[3px] border-l-[#ffffff] rounded-xl px-4 py-3 shadow-[0_2px_8px_rgba(0,0,0,0.4)]"
             >
               <div className="flex items-center gap-2 mb-1">
                 <div className={`w-6 h-6 rounded-lg ${kpi.bgColor} flex items-center justify-center`}>

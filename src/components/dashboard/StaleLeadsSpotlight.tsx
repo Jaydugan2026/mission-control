@@ -22,7 +22,7 @@ function urgencyColor(days: number): { bar: string; text: string; badge: string 
 
 export function StaleLeadsSpotlight({ leads, isLoading = false }: StaleLeadsSpotlightProps) {
   return (
-    <div className="bg-[#0a0f1a] border border-[#1a2440] border-l-[3px] border-l-[#c88b5a] rounded-xl p-5 shadow-[0_4px_16px_rgba(0,0,0,0.5)] fade-in">
+    <div className="bg-[#050505] border border-[#ffffff30] border-l-[3px] border-l-[#c88b5a] rounded-xl p-5 shadow-[0_4px_16px_rgba(0,0,0,0.5)] fade-in">
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
@@ -41,7 +41,7 @@ export function StaleLeadsSpotlight({ leads, isLoading = false }: StaleLeadsSpot
       {isLoading ? (
         <div className="space-y-3">
           {[1, 2, 3].map((i) => (
-            <div key={i} className="h-10 bg-[#111d35] rounded-lg animate-pulse" />
+            <div key={i} className="h-10 bg-[#1a1a1a] rounded-lg animate-pulse" />
           ))}
         </div>
       ) : leads.length === 0 ? (
@@ -55,7 +55,7 @@ export function StaleLeadsSpotlight({ leads, isLoading = false }: StaleLeadsSpot
             const colors = urgencyColor(lead.daysInStage);
             const barWidth = Math.min((lead.daysInStage / 14) * 100, 100);
             return (
-              <div key={lead.id} className="group px-3 py-2.5 rounded-lg bg-[#0d1428] border border-[#1a2440] hover:border-[#c88b5a]/50 transition-all duration-200">
+              <div key={lead.id} className="group px-3 py-2.5 rounded-lg bg-[#0a0a0a] border border-[#ffffff20] hover:border-[#c88b5a]/50 transition-all duration-200">
                 <div className="flex items-center justify-between mb-1.5">
                   <div className="flex items-center gap-2 min-w-0">
                     <span className="text-sm font-medium text-[#f0f4fc] truncate">{lead.name}</span>
@@ -67,7 +67,7 @@ export function StaleLeadsSpotlight({ leads, isLoading = false }: StaleLeadsSpot
                   </span>
                 </div>
                 {/* Urgency bar */}
-                <div className="h-1 bg-[#1a2440] rounded-full overflow-hidden">
+                <div className="h-1 bg-[#1a1a1a] rounded-full overflow-hidden">
                   <div
                     className={`h-full ${colors.bar} rounded-full transition-all duration-500`}
                     style={{ width: `${barWidth}%` }}

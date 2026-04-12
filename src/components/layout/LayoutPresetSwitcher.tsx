@@ -15,7 +15,7 @@ export function LayoutPresetSwitcher({ currentPreset, onPresetChange }: LayoutPr
     <Card variant="bordered" padding="sm" className="inline-flex gap-1">
       <Button
         onClick={() => onPresetChange('balanced')}
-        variant={currentPreset === 'balanced' ? 'primary' : 'ghost'}
+        variant={currentPreset === 'balanced' ? 'default' : 'ghost'}
         size="sm"
         className="text-xs"
       >
@@ -23,7 +23,7 @@ export function LayoutPresetSwitcher({ currentPreset, onPresetChange }: LayoutPr
       </Button>
       <Button
         onClick={() => onPresetChange('agent-focused')}
-        variant={currentPreset === 'agent-focused' ? 'primary' : 'ghost'}
+        variant={currentPreset === 'agent-focused' ? 'default' : 'ghost'}
         size="sm"
         className="text-xs"
       >

@@ -23,7 +23,7 @@ export function Header() {
   }, []);
 
   return (
-    <header className="h-16 border-b border-[#1a2440] bg-[#0a0f1a]/80 backdrop-blur-md flex items-center justify-between px-6 sticky top-0 z-50">
+    <header className="h-16 border-b border-[#ffffff20] bg-[#000000]/80 backdrop-blur-md flex items-center justify-between px-6 sticky top-0 z-50">
       <div className="flex items-center gap-4">
         {/* Fortitude Roofing Logo */}
         <div className="relative w-10 h-10 shrink-0">
@@ -35,14 +35,14 @@ export function Header() {
           />
         </div>
         <div className="flex items-center gap-2">
-          <span className="text-[#3b82f6] font-bold text-lg">⚡</span>
+          <span className="text-[#ffffff] font-bold text-lg">⚡</span>
           <div>
-            <span className="text-[#f0f4fc] font-semibold text-sm tracking-wide block">MISSION CONTROL</span>
-            <span className="text-[#8895b0] text-xs block">Fortitude Roofing</span>
+            <span className="text-[#ffffff] font-semibold text-sm tracking-wide block">MISSION CONTROL</span>
+            <span className="text-[#999999] text-xs block">Fortitude Roofing</span>
           </div>
         </div>
       </div>
-      <div className="font-mono text-xs text-[#8895b0]">{currentTime}</div>
+      <div className="font-mono text-xs text-[#999999]">{currentTime}</div>
     </header>
   );
 }

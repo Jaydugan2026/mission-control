@@ -35,7 +35,7 @@ export function PipelineOverview({ stages = [], onRefresh, isLoading = false, la
   const totalDeals = stages.reduce((sum, s) => sum + s.count, 0);
 
   return (
-    <div className="bg-[#0a0f1a] border border-[#1a2440] border-l-[3px] border-l-[#3b82f6] rounded-xl p-5 shadow-[0_4px_16px_rgba(0,0,0,0.5)]">
+    <div className="bg-[#050505] border border-[#ffffff30] border-l-[3px] border-l-[#ffffff] rounded-xl p-5 shadow-[0_4px_16px_rgba(0,0,0,0.5)]">
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
         <div>
@@ -68,10 +68,10 @@ export function PipelineOverview({ stages = [], onRefresh, isLoading = false, la
             <div key={stage.name}>
               <button
                 onClick={() => setExpandedStage(expandedStage === stage.name ? null : stage.name)}
-                className="w-full flex items-center justify-between px-3 py-2 rounded-lg bg-[#0d1428] hover:bg-[#1a2440] border border-[#1a2440] hover:border-[#3b82f6]/50 transition-all duration-200 cursor-pointer"
+                className="w-full flex items-center justify-between px-3 py-2 rounded-lg bg-[#0a0a0a] hover:bg-[#141414] border border-[#ffffff20] hover:border-[#ffffff]/60 transition-all duration-200 cursor-pointer"
               >
                 <div className="flex items-center gap-2.5">
-                  <span className="text-xs font-mono text-[#3b82f6] bg-[#3b82f6]/10 px-1.5 py-0.5 rounded">
+                  <span className="text-xs font-mono text-[#ffffff] bg-[#ffffff]/10 px-1.5 py-0.5 rounded">
                     {stage.count}
                   </span>
                   <span className="text-sm text-[#f0f4fc] font-medium">{stage.name}</span>
@@ -87,7 +87,7 @@ export function PipelineOverview({ stages = [], onRefresh, isLoading = false, la
               {expandedStage === stage.name && stage.deals.length > 0 && (
                 <div className="mt-1 ml-2 space-y-1 pb-1">
                   {stage.deals.map((deal) => (
-                    <div key={deal.id} className="px-3 py-2 rounded-lg bg-[#050810] border border-[#1a2440] hover:border-[#3b82f6]/30 transition-all duration-200">
+                    <div key={deal.id} className="px-3 py-2 rounded-lg bg-[#000000] border border-[#ffffff20] hover:border-[#ffffff]/40 transition-all duration-200">
                       <div className="flex items-center justify-between">
                         <span className="text-sm text-[#f0f4fc]">{deal.name}</span>
                       </div>
@@ -105,7 +105,7 @@ export function PipelineOverview({ stages = [], onRefresh, isLoading = false, la
           ))}
 
           {/* Total row */}
-          <div className="flex items-center justify-between px-3 py-2 mt-2 border-t border-[#1a2440] pt-3">
+          <div className="flex items-center justify-between px-3 py-2 mt-2 border-t border-[#ffffff30] pt-3">
             <span className="text-xs font-semibold text-[#8895b0] uppercase tracking-wide">Total Active</span>
             <span className="text-base font-bold text-[#10b981]">{totalDeals} deals</span>
           </div>
